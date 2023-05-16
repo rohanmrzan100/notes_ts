@@ -1,46 +1,47 @@
-import axios,{AxiosError} from "axios";
-
-import {Note} from "../modals/Notes"
-import { get } from "http";
+import axios, { AxiosError } from "axios";
+import { Note } from "../modals/Notes";
 axios.defaults.baseURL = "http://localhost:3001/";
-axios.defaults.headers.post["Content-Type"] =
-  "application/json";
+axios.defaults.headers.post["Content-Type"] = "application/json";
 
-export async function loadNotes():Promise<Note[]> {
-  try {
-    const response = await axios.get("api/notes");
+const headers: any = {
+  Authorization: localStorage.getItem("token"),
+};
+export async function loadNotes(): Promise<Note[]> {
+  const response = await axios.get("api/notes", {
+    headers: { Authorization: localStorage.getItem("token") },
+  });
 
-    return response.data;
-  } catch (error) {
-
-    const err = error as AxiosError;
-    throw err.response?.data
-
-  }
+  return response.data;
 }
 
 interface noteInput {
-    title:string,
-    text?:string
+  title: string;
+  text?: string;
 }
 
 export async function addNote(note: noteInput): Promise<Note> {
-  try {
-    const response = await axios.post("api/notes", note);
-    return response.data;
-  } catch (error) {
-    const err = error as AxiosError;
-    throw err.response?.data;
-  }
+  const response = await axios.post("api/notes", note, {
+    headers: headers,
+  });
+  return response.data;
+}
+ interface updateInput{
+  title:string,
+  text?:string,
+  id:string
+ }
+
+export async function updateNote(data: updateInput): Promise<Note> {
+  const response = await axios.patch(`api/notes/${data.id}`,{
+    title:data.title,
+    text:data.text
+  } ,{
+    headers: headers,
+  });
+  return response.data;
 }
 
-
 export async function deleteNote(_id: string): Promise<string> {
-  try {
-    const response = await axios.delete(`api/notes/${_id}`);
-    return response.data
-  } catch (error) {
-    const err = error as AxiosError;
-    throw err.response?.data;
-  }
+  const response = await axios.delete(`api/notes/${_id}`);
+  return response.data;
 }

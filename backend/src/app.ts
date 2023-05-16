@@ -3,12 +3,17 @@ import "dotenv/config";
 import morgan from "morgan";
 import cors from "cors";
 import noteRouter from "./routes/Notes";
-const app = express();
+import userRouter from "./routes/User"
+import session from "express-session";
+import MongoStore from "connect-mongo"
+ const app = express();
 
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
+
 app.use("/api/notes", noteRouter);
+app.use("/api/user", userRouter);
 
 app.use((req, res, next) => {
   next(Error("Endpoint not found"));

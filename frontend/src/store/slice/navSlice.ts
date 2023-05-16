@@ -10,7 +10,7 @@ const initialState: State = {
   toggle: false,
 };
 
-export const counterSlice = createSlice({
+export const sideNavReducer = createSlice({
   name: "sideNav",
 
   initialState,
@@ -24,6 +24,6 @@ export const counterSlice = createSlice({
   },
 });
 
-export const { toggleSideNav } = counterSlice.actions;
+export const { toggleSideNav } = sideNavReducer.actions;
 
-export default counterSlice.reducer;
+export default sideNavReducer.reducer;

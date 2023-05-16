@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useAppDispatch } from "../../store/hook";
 import { toggleSideNav } from "../../store/slice/navSlice";
+import { logout } from "../../store/slice/authSlice";
 const SideNav: React.FC = () => {
   const dispatch = useAppDispatch();
   return (
@@ -44,7 +45,7 @@ const SideNav: React.FC = () => {
           <ul className="space-y-4 font-medium ">
             <li>
               <a
-                href="#/"
+                href="/auth/signin"
                 className="flex items-center p-2 rounded-lg text-white  hover:bg-gray-700"
               >
                 <FontAwesomeIcon icon={faRightToBracket} />
@@ -53,16 +54,17 @@ const SideNav: React.FC = () => {
             </li>
             <li>
               <a
-                href="#/"
+                href="/auth/signup"
                 className="flex items-center p-2 =rounded-lg text-white  hover:bg-gray-700"
               >
                 <FontAwesomeIcon icon={faRightFromBracket} />
-                <span className="ml-3">Sign out</span>
+                <span className="ml-3">Sign Up</span>
               </a>
             </li>
             <li>
               <a
-                href="#/"
+                href="/auth/signin"
+                onClick={()=>dispatch(logout([]))}
                 className="flex items-center p-2 rounded-lg text-white  hover:bg-gray-700"
               >
                 <FontAwesomeIcon icon={faUserPlus} />

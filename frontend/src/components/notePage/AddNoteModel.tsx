@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toggleModal } from "../../store/slice/modalSlice";
 import { addNote } from "../../API/Notes";
-import { successToast } from "../HOC/Toast";
-// import { Note } from "../modals/Notes";
+import { errorToast, successToast } from "../HOC/Toast";
+import { sendToken } from "../../store/slice/authSlice";
 interface NoteBody {
   title: string;
   text?: string;
@@ -20,22 +20,29 @@ export default function Modal() {
       title: e.target[0].value,
       text: e.target[1].value,
     };
-
-    addNote(note).then((res) => {
-      dispatch(toggleModal([]));
-      successToast("Note Added SucessFully")
-      setTimeout(()=>{
- window.location.href = "/";
-      },2000)
-     
-
-    });
+    dispatch(
+      sendToken({
+        token: localStorage.getItem("token"),
+      })
+    );
+    addNote(note)
+      .then((res) => {
+        dispatch(toggleModal([]));
+        successToast("Note Added SucessFully");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
+      })
+      .catch((error) => {
+        console.log(error);
+        errorToast(error);
+      });
   };
   return (
     <>
       {showModal && (
         <>
-          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+          <div className="justify-center min-w-[300px] items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
             <form
               onSubmit={handleSubmit}
               className="relative w-auto m-6  max-w-3xl  mx-16"

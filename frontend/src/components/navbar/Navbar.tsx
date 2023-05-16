@@ -4,9 +4,10 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toggleSideNav } from "../../store/slice/navSlice";
+import { logout } from "../../store/slice/authSlice";
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
-
+const isAuth = useAppSelector(state=>state.auth.isAuth)
   const dispatch = useAppDispatch();
   return (
     <>
@@ -34,30 +35,40 @@ const Navbar: React.FC = () => {
           </button>
           <div className="hidden w-full md:block md:w-auto" id="navbar-default">
             <ul className="font-medium flex justify-center items-center space-x-2">
-              <li>
-                <button
-                  onClick={() => navigate("/auth/login")}
-                  className="active:bg-gray-500 flex items-center py-2 px-4  rounded-lg text-white hover:bg-gray-700 "
-                >
-                  Sign In
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate("/auth/login")}
-                  className="active:bg-gray-500 flex items-center py-2 px-4  rounded-lg text-white hover:bg-gray-700 "
-                >
-                  Sign Out
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate("/auth/register")}
-                  className="active:bg-gray-500 flex items-center py-2 px-4  rounded-lg text-white hover:bg-gray-700 "
-                >
-                  Sign Up
-                </button>
-              </li>
+              {!isAuth &&
+                <>
+                  <li>
+                    <button
+                      onClick={() => navigate("/auth/signin")}
+                      className="active:bg-gray-500 flex items-center py-2 px-4  rounded-lg text-white hover:bg-gray-700 "
+                    >
+                      Sign In
+                    </button>
+                  </li>
+
+                  <li>
+                    <button
+                      onClick={() => navigate("/auth/signup")}
+                      className="active:bg-gray-500 flex items-center py-2 px-4  rounded-lg text-white hover:bg-gray-700 "
+                    >
+                      Sign Up
+                    </button>
+                  </li>
+                </>
+              }
+              {isAuth && (
+                <li>
+                  <button
+                    onClick={() => {
+                      dispatch(logout([]));
+                      navigate("/auth/signin");
+                    }}
+                    className="active:bg-gray-500 flex items-center py-2 px-4  rounded-lg text-white hover:bg-gray-700 "
+                  >
+                    Sign Out
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>

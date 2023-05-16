@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import addNoteModalReducer from "./slice/modalSlice"
+import modal from "./slice/modalSlice";
 import  sideNavReducer  from "./slice/navSlice";
+import authReducer from "./slice/authSlice"
 export const store = configureStore({
   reducer: {
-    modal: addNoteModalReducer,
-    nav: sideNavReducer
+    modal: modal,
+    nav: sideNavReducer,
+    auth: authReducer,
   },
 });
 

@@ -1,4 +1,3 @@
-
 import mongoose, { InferSchemaType } from "mongoose";
 
 const noteSchema = new mongoose.Schema(
@@ -15,12 +14,9 @@ const noteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+type Note = InferSchemaType<typeof noteSchema>;
 
-type Note = InferSchemaType< typeof noteSchema>
+const noteModel = mongoose.model<Note>("note", noteSchema);
 
-
-
-const noteModel = mongoose.model<Note>("note",noteSchema)
-
-
-export default noteModel
+export default noteModel;
+export {Note}

@@ -3,30 +3,28 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { Note } from "../../modals/Notes";
 import moment from "moment";
-import { deleteNote } from "../../API/Notes";
-// import { successToast } from "../HOC/Toast";
 import { useNavigate } from "react-router-dom";
-import { successToast } from "../HOC/Toast";
+import { useAppDispatch } from "../../store/hook";
+import { deleteToggle, updateToggle } from "../../store/slice/modalSlice";
 interface noteProps {
   note: Note;
 }
 
 const NoteCard = ({ note }: noteProps) => {
-  const { createdAt, updatedAt } = note;
+  const { createdAt, updatedAt, _id } = note;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   let createdUpdatedText: string;
   if (createdAt > updatedAt) {
     createdUpdatedText = moment().format("YYYY MM DD,  h:mm:ss a");
   } else {
     createdUpdatedText = moment(createdAt).format("YYYY MM DD,  h:mm a");
   }
-
+  const handleEdit = () => {
+    dispatch(updateToggle(_id));
+  };
   const handleDelete = () => {
-
-    // deleteNote(note._id).then((res)=>{
-    //   successToast("Deleted Successfully")
-    //   setTimeout(() => (window.location.href = "/"),2000);
-  // })
+    dispatch(deleteToggle(_id));
   };
   return (
     <>
@@ -52,9 +50,7 @@ const NoteCard = ({ note }: noteProps) => {
           <div className="flex space-x-4">
             <div className="relative flex flex-col items-center group">
               <button
-                onClick={() => {
-                  navigate(`api/notes/${note._id}`);
-                }}
+                onClick={handleEdit}
                 className=" border-2 border-blue-600 px-2 py-2 hover:text-white rounded-md  hover:bg-blue-600 active:bg-blue-700"
               >
                 <FontAwesomeIcon icon={faPenToSquare} className="text-sm" />
