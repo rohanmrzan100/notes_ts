@@ -6,23 +6,26 @@ import { deleteToggle } from "../../store/slice/modalSlice";
 import { deleteNote } from "../../API/Notes";
 import { errorToast, successToast } from "../HOC/Toast";
 import { useNavigate } from "react-router-dom";
+import { loading } from "../../store/slice/authSlice";
 
 const DeleteModal = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const noteId = useAppSelector((state) => state.modal._id);
   const handleClick = () => {
+    dispatch(loading({ type: "true" }));
     deleteNote(noteId)
       .then((res) => {
-        console.log(res);
+        dispatch(loading({ type: "false" }));
+        dispatch(deleteToggle([]));
         successToast("Note Deleted");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000);
+        navigate("/");
       })
       .catch((error) => {
-        console.log(error);
-        errorToast(error);
+      
+        dispatch(loading({ type: "false" }));
+        console.log(error.response.data.error);
+        errorToast("Could not delete note. "+error.response.data.error);
       });
   };
   return (

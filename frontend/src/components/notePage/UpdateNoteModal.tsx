@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toggleModal, updateToggle } from "../../store/slice/modalSlice";
-import { updateNote } from "../../API/Notes";
+import { loadNoteById, updateNote } from "../../API/Notes";
 import { errorToast, successToast } from "../HOC/Toast";
+import { useNavigate } from "react-router-dom";
+import { loading } from "../../store/slice/authSlice";
+import { Note } from "../../modals/Notes";
 
 interface updateBody {
   title: string;
@@ -12,8 +15,24 @@ interface updateBody {
   id: string;
 }
 export default function UpdateNoteModal() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [text, setText] = useState(" ");
+  const [title, setTitle] = useState(" ");
+  // const [note, setNote] = useState<Note>();
   const postId = useAppSelector((state) => state.modal._id);
+  useEffect(() => {
+  loadNoteById(postId).then(note=>{
+ 
+    setTitle(note.note.title);
+    setText(note.note.text);
+  })
+  
+      
+
+  
+  });
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
@@ -22,18 +41,19 @@ export default function UpdateNoteModal() {
       text: e.target[1].value,
       id: postId,
     };
+    dispatch(loading({ type: "true" }));
 
     updateNote(note)
       .then((res) => {
-        
-        successToast("Note Updated")
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 2000);
+        dispatch(loading({ type: "false" }));
+        dispatch(updateToggle([]));
+        successToast("Note Updated");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
-        errorToast("Note Updation failed");
+        errorToast("Updated " + error.response.data.error);
+        dispatch(loading({ type: "false" }));
       });
   };
   return (
@@ -66,6 +86,7 @@ export default function UpdateNoteModal() {
                       Title
                     </label>
                     <input
+                      placeholder={title}
                       type="text"
                       name="title"
                       aria-label="Enter title"
@@ -77,6 +98,7 @@ export default function UpdateNoteModal() {
                       Text
                     </label>
                     <textarea
+                      placeholder={text}
                       rows={10}
                       name="text"
                       aria-label="Enter text"

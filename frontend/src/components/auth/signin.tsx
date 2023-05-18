@@ -4,8 +4,8 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../API/Users";
 import { errorToast, successToast } from "../HOC/Toast";
-import { useAppDispatch,useAppSelector } from "../../store/hook";
-import { login } from "../../store/slice/authSlice";
+import { useAppDispatch } from "../../store/hook";
+import { loading, login } from "../../store/slice/authSlice";
 interface loginInput {
   email: string;
   password: string;
@@ -18,6 +18,7 @@ const Signin: React.FC = () => {
   const [show, setShow] = useState(false);
   const handleSubmit = (e: any) => {
     e.preventDefault();
+     dispatch(loading({ type: "true" }));
     const data: loginInput = {
       email: e.target[0].value,
       password: e.target[1].value,
@@ -29,10 +30,12 @@ const Signin: React.FC = () => {
           type:"success",
           token:res.token
         }))
+         dispatch(loading({ type: "false" }));
         successToast("login Successful");
         navigate("/")
       })
       .catch((error) => {
+         dispatch(loading({ type: "false" }));
         setError(true);
         setErrorMsg(error.response.data.msg);
         console.log(error);

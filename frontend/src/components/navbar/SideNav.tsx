@@ -6,11 +6,12 @@ import {
   faRightFromBracket,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAppDispatch } from "../../store/hook";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toggleSideNav } from "../../store/slice/navSlice";
 import { logout } from "../../store/slice/authSlice";
 const SideNav: React.FC = () => {
   const dispatch = useAppDispatch();
+  const isAuth = useAppSelector(state=>state.auth.isAuth)
   return (
     <div className="md:hidden lg:hidden">
       <aside
@@ -43,37 +44,44 @@ const SideNav: React.FC = () => {
           </div>
           <hr className="h-px my-4 bborder-0 bg-gray-700"></hr>
           <ul className="space-y-4 font-medium ">
+            {!isAuth && (
+              <>
+                <li>
+                  <a
+                    href="/auth/signin"
+                    className="flex items-center p-2 rounded-lg text-white  hover:bg-gray-700"
+                  >
+                    <FontAwesomeIcon icon={faRightToBracket} />
+                    <span className="ml-3">Sign in</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/auth/signup"
+                    className="flex items-center p-2 =rounded-lg text-white  hover:bg-gray-700"
+                  >
+                    <FontAwesomeIcon icon={faRightFromBracket} />
+                    <span className="ml-3">Sign Up</span>
+                  </a>
+                </li>
+              </>
+            )}
             <li>
-              <a
-                href="/auth/signin"
-                className="flex items-center p-2 rounded-lg text-white  hover:bg-gray-700"
-              >
-                <FontAwesomeIcon icon={faRightToBracket} />
-                <span className="ml-3">Sign in</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/auth/signup"
-                className="flex items-center p-2 =rounded-lg text-white  hover:bg-gray-700"
-              >
-                <FontAwesomeIcon icon={faRightFromBracket} />
-                <span className="ml-3">Sign Up</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/auth/signin"
-                onClick={()=>dispatch(logout([]))}
-                className="flex items-center p-2 rounded-lg text-white  hover:bg-gray-700"
-              >
-                <FontAwesomeIcon icon={faUserPlus} />
-                <span className="ml-3">Sign out</span>
-              </a>
+              {isAuth && (
+                <a
+                  href="/auth/signin"
+                  onClick={() => dispatch(logout([]))}
+                  className="flex items-center p-2 rounded-lg text-white  hover:bg-gray-700"
+                >
+                  <FontAwesomeIcon icon={faUserPlus} />
+                  <span className="ml-3">Sign out</span>
+                </a>
+              )}
             </li>
           </ul>
         </div>
       </aside>
+      <div className="opacity-20 fixed inset-0 z-20 bg-black"></div>
     </div>
   );
 };

@@ -5,7 +5,8 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toggleModal } from "../../store/slice/modalSlice";
 import { addNote } from "../../API/Notes";
 import { errorToast, successToast } from "../HOC/Toast";
-import { sendToken } from "../../store/slice/authSlice";
+import { loading, sendToken } from "../../store/slice/authSlice";
+import { useNavigate } from "react-router-dom";
 interface NoteBody {
   title: string;
   text?: string;
@@ -13,6 +14,7 @@ interface NoteBody {
 export default function Modal() {
   const showModal = useAppSelector((state) => state.modal.toggle);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate()
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
@@ -20,20 +22,18 @@ export default function Modal() {
       title: e.target[0].value,
       text: e.target[1].value,
     };
-    dispatch(
-      sendToken({
-        token: localStorage.getItem("token"),
-      })
-    );
+
+     dispatch(loading({ type: "true" }));
     addNote(note)
       .then((res) => {
+         dispatch(loading({ type: "false" }));
+    
         dispatch(toggleModal([]));
         successToast("Note Added SucessFully");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000);
+       navigate("/")
       })
       .catch((error) => {
+         dispatch(loading({ type: "false" }));
         console.log(error);
         errorToast(error);
       });

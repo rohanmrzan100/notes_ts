@@ -11,7 +11,7 @@ interface noteProps {
 }
 
 const NoteCard = ({ note }: noteProps) => {
-  const { createdAt, updatedAt, _id } = note;
+  const { createdAt, updatedAt, _id,title,text } = note;
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   let createdUpdatedText: string;

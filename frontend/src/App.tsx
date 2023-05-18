@@ -9,6 +9,8 @@ import { useAppSelector } from "./store/hook";
 import { ToastContainer } from "react-toastify";
 
 const App = () => {
+  const isLoading = useAppSelector((state) => state.auth.loading);
+
   const showNav = useAppSelector((state) => state.nav.toggle);
   return (
     <>
@@ -23,6 +25,9 @@ const App = () => {
         </Routes>
         <ToastContainer />
       </BrowserRouter>
+      {isLoading && (
+        <div className="opacity-30 fixed inset-0 z-40 bg-black"></div>
+      )}
     </>
   );
 };

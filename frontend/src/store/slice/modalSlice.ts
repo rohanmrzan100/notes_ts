@@ -7,6 +7,7 @@ interface CounterState {
   deleteToggle: boolean;
   updateToggle: boolean;
   _id: string;
+
 }
 
 // Define the initial state using that type
@@ -15,6 +16,7 @@ const initialState: CounterState = {
   deleteToggle: false,
   updateToggle:false,
   _id: "",
+ 
 };
 
 export const modal = createSlice({

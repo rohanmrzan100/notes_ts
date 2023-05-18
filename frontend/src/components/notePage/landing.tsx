@@ -11,33 +11,50 @@ import { errorToast } from "../HOC/Toast";
 import { sendToken } from "../../store/slice/authSlice";
 import DeleteModal from "./DeleteModal";
 import UpdateNoteModal from "./UpdateNoteModal";
+
 const Landing = () => {
+  const isLoading = useAppSelector((state) => state.auth.loading);
   const [notes, setNotes] = useState<Note[]>([]);
   const [empty, setEmpty] = useState(false);
+
+  const EMPTYMsg = "There are no notes. Create notes now";
+
+  const [emptyMsg, setEmptyMsg] = useState(EMPTYMsg);
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const deleteToggle = useAppSelector((state) => state.modal.deleteToggle);
-    const updateToggle = useAppSelector((state) => state.modal.updateToggle);
-  const emptyMsg = "There are no notes. Create notes now";
+  const updateToggle = useAppSelector((state) => state.modal.updateToggle);
   const dispatch = useAppDispatch();
   useEffect(() => {
+    if (localStorage.getItem("token")) {
+      dispatch(
+        sendToken({
+          token: localStorage.getItem("token"),
+        })
+      );
+    }else{
+       setEmpty(true);
+       setEmptyMsg("You are not logged in. Login First");
+       return errorToast(" Please Login first");
+    }
     loadNotes()
       .then((res) => {
         setNotes(res);
-        res.length<=0 ?setEmpty(true) : setEmpty(false)
-        dispatch(
-          sendToken({
-            token: localStorage.getItem("token"),
-          })
-        );
+        res.length <= 0 ? setEmpty(true) : setEmpty(false);
       })
       .catch((err) => {
-        errorToast(err.response.data.message + " Please Login");
+        if (!isAuth) {
+          setEmpty(true);
+          setEmptyMsg("You are not logged in. Login First");
+          return errorToast(" Please Login first");
+        }
+        console.log(err.response.data);
+        errorToast(err.response.data.error);
       });
-  }, []);
+  }, [isLoading]);
 
   return (
     <>
-      {empty && <h1>{emptyMsg}</h1>}
+      {empty && <h1 className="text-lg p-8">{emptyMsg}</h1>}
       <div className="grid grid-cols-1 gap-y-6 gap-x-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {notes.map((note) => (
           <NoteCard note={note} key={note._id} />
@@ -56,8 +73,8 @@ const Landing = () => {
           </button>
         </div>
       )}
-      {deleteToggle && <DeleteModal/>}
-      {updateToggle && <UpdateNoteModal/>}
+      {deleteToggle && <DeleteModal />}
+      {updateToggle && <UpdateNoteModal />}
     </>
   );
 };

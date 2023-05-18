@@ -5,12 +5,14 @@ import userModel from "../models/User";
 
 
 
+
 export const getUserNotes: RequestHandler = async (
   req,
   res,
   next
 ) => {
   try {
+    
     const userID = res.locals.user._id;
     console.log(userID
       );
@@ -90,7 +92,7 @@ export const getNote: RequestHandler<
     if (!note) {
       return res.status(404).json({ error: "Note not found" });
     }
-    res.status(200).json({ doc: note });
+    res.status(200).json({note });
   } catch (error) {
     next(error);
   }
@@ -128,6 +130,7 @@ export const deleteNote: RequestHandler<deleteNoteID> = async (
   next
 ) => {
   try {
+    
     const id = req.params.id;
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({ error: "Note Id is invalid" });

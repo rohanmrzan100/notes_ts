@@ -4,7 +4,8 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../API/Users";
 import { errorToast, successToast } from "../HOC/Toast";
-
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { loading } from "../../store/slice/authSlice";
 interface userInput {
   name: string;
   email: string;
@@ -12,29 +13,37 @@ interface userInput {
 }
 
 const Signup: React.FC = () => {
-    const [error,setError] = useState(false)
-    const [errorMsg,setErrorMsg] = useState("")
+  const dispatch = useAppDispatch();
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
+    dispatch(
+      loading({
+        type: "true",
+      })
+    );
     const data: userInput = {
       name: e.target[0].value,
       email: e.target[1].value,
       password: e.target[2].value,
     };
-    registerUser(data).then(res=>{
-        successToast("Registration Sucessful")
-        navigate("/auth/signin")
-        
-    }).catch(err=>{
+
+    registerUser(data)
+      .then((res) => {
+        dispatch(loading({ type: "false" }));
+        successToast("Registration Sucessful");
+        navigate("/auth/signin");
+      })
+      .catch((err) => {
+        dispatch(loading({ type: "false" }));
         console.log(err.response.data.error);
-        setError(true)
+        setError(true);
         setErrorMsg(err.response.data.error);
-        errorToast(err.response.data.error)
-        
-    })
+        errorToast(err.response.data.error);
+      });
   };
   return (
     <>
@@ -60,13 +69,15 @@ const Signup: React.FC = () => {
                 Email
               </label>
               <input
-              onChange={()=>setError(false)}
+                onChange={() => setError(false)}
                 name="email"
                 type="email"
                 className="block w-full px-4 py-2 mt-2 text-black bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
-{error && <p className="mb-4 text-red-700 font-semibold">{errorMsg}</p>}
+            {error && (
+              <p className="mb-4 text-red-700 font-semibold">{errorMsg}</p>
+            )}
             <div className="mb-2">
               <label className="block text-sm font-semibold text-gray-800">
                 Password
@@ -112,6 +123,8 @@ const Signup: React.FC = () => {
           </p>
         </div>
       </div>
+
+    
     </>
   );
 };
